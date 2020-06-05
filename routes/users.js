@@ -1,14 +1,35 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const userControllers = require('../controllers/UserControllers');
+const userControllers = require("../controllers/UserControllers");
+
+//use validate => body,check, validationResult
+const { body } = require("express-validator");
 
 /* GET users listing. */
 // http://localhost:3000/users/
-router.get('/', userControllers.index);
+router.get("/", userControllers.index);
 // http://localhost:3000/users/login
-router.get('/login', userControllers.login);
+router.post("/login", userControllers.login);
 // http://localhost:3000/users/register
-router.post('/register', userControllers.register);
-
+//validate name
+router.post(
+  "/register",
+  [
+    body("name").not().isEmpty().withMessage("Name is required"),
+    body("email")
+      .not()
+      .isEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Email is not correct"),
+    body("password")
+      .not()
+      .isEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 3 })
+      .withMessage("Password is less than 3 charactors long"),
+  ],
+  userControllers.register
+);
 
 module.exports = router;

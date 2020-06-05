@@ -1,12 +1,11 @@
 //Import model from models
-const Company = require('../models/company');
+const Company = require("../models/company");
 
 exports.index = async (req, res, next) => {
-    
-    const company = await Company.findOne();
-    console.log(company);
-    
-    res.status(200).json({
-        data: company
-    });
-}
+  const company = await Company.findOne();
+  console.log(company);
+
+  res.status(200).json({
+    data: company,
+  });
+};
