@@ -2,8 +2,12 @@ var express = require("express");
 var router = express.Router();
 const staffControllers = require("../controllers/StaffControllers");
 
+//protect by token
+const passportJWT = require("../middleware/PassportJWT");
+
 //list staffs
-router.get("/", staffControllers.index);
+//and repuire token for get data
+router.get("/", [passportJWT.isLogin], staffControllers.index);
 
 //add staff
 router.post("/", staffControllers.insert);

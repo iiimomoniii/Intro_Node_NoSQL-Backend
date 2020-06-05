@@ -20,9 +20,15 @@ const companyRouter = require('./routes/company');
 const staffRouter = require('./routes/staff');
 const shopRouter = require('./routes/shop');
 
-
 //import Handle Error
 const errorHandler = require('./middleware/ErrorHandler');
+
+//import passport
+const passport = require('passport');
+
+//protect by token
+const passportJWT = require("./middleware/PassportJWT");
+
 
 //Connect DB
 const options = {
@@ -43,6 +49,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//init passport
+app.use(passport.initialize());
+
 //localhost
 app.use('/', indexRouter);
 //localhost/users
@@ -52,7 +61,8 @@ app.use('/company', companyRouter);
 //staff
 app.use('/staff', staffRouter);
 //shop
-app.use('/shop', shopRouter);
+//get shop require token
+app.use('/shop', [passportJWT.isLogin] , shopRouter);
 //hadler error
 app.use(errorHandler);
 
