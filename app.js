@@ -30,6 +30,10 @@ const passport = require('passport');
 const passportJWT = require("./middleware/PassportJWT");
 
 
+//protect app by helmet
+const helmet = require('helmet');
+
+
 //Connect DB
 const options = {
     useNewUrlParser: true,
@@ -51,6 +55,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //init passport
 app.use(passport.initialize());
+
+//init helmet
+app.use(helmet());
 
 //localhost
 app.use('/', indexRouter);

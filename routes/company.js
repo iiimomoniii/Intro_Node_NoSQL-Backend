@@ -1,7 +1,15 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const CompanyControllers = require("../controllers/CompanyControllers");
 
-router.get("/", CompanyControllers.index);
+const passportJWT = require('../middleware/PassportJWT');
+const checkAdmin = require('../middleware/CheckAdmin');
+
+
+router.get("/", [
+    passportJWT.isLogin,
+    checkAdmin.isAdmin
+], CompanyControllers.index);
+
 
 module.exports = router;
