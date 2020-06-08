@@ -1,12 +1,10 @@
 //import express
 const express = require('express');
-//Use express
-const app = express();
 
 //import DB
 const mongoose = require('mongoose');
 
-//require config 
+//import config 
 const config = require('./config/index');
 
 const path = require('path');
@@ -29,20 +27,27 @@ const passport = require('passport');
 //protect by token
 const passportJWT = require("./middleware/PassportJWT");
 
-
 //protect app by helmet
 const helmet = require('helmet');
 
+//limit access req
+const rateLimit = require("express-rate-limit");
+
+//access (domain) have permission to access
+var cors = require('cors')
 
 //Connect DB
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    user: 'userName',
-    pass: 'passWord'
+    user: config.MONGODB_User,
+    pass: config.MONGODB_Pass
   };
 
 mongoose.connect(config.MONGODB_URI,options);
+
+//Use express
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json({
@@ -56,8 +61,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 //init passport
 app.use(passport.initialize());
 
+//init cors
+app.use(cors())
+
+//init limit access req
+app.set('trust proxy', 1);
+const limiter = rateLimit({
+  windowMs: 10 * 1000, // 10 sec
+  max: 5 // limit each IP to 100 requests per windowMs
+});
+//  apply to all requests
+app.use(limiter);
+
 //init helmet
 app.use(helmet());
+
 
 //localhost
 app.use('/', indexRouter);
